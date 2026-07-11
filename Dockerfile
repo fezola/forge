@@ -14,7 +14,7 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/packages ./packages
 COPY . .
-RUN cd apps/api && npx -y @nestjs/cli build
+RUN npm install -g @nestjs/cli && cd apps/api && nest build
 RUN cd apps/api && npx prisma generate
 
 FROM node:20-alpine AS runner
