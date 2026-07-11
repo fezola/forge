@@ -87,7 +87,7 @@ export function generateInteractiveComponent(
   return `export default function ${name}({ ${allSig} }) {
 const{useState}=React;
 const cw=Math.max(340,Math.min(640,width));
-const ws={width:"100%",minWidth:340,maxWidth:cw,fontFamily:"system-ui,-apple-system,sans-serif",boxSizing:"border-box",margin:"0 auto"};
+const ws={width:"100%",minWidth:340,maxWidth:cw,fontFamily:"system-ui,-apple-system,sans-serif",boxSizing:"border-box",margin:"0 auto",minHeight:740};
 ${renderCode}
 `;
 }
@@ -105,7 +105,7 @@ var PwIco=React.createElement("svg",{width:14,height:14,viewBox:"0 0 24 24",fill
 var NmIco=React.createElement("svg",{width:14,height:14,viewBox:"0 0 24 24",fill:"none",stroke:"currentColor",strokeWidth:2},React.createElement("path",{d:"M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"}),React.createElement("circle",{cx:12,cy:7,r:4}))
 function Fld(p){var[h,setH]=React.useState(false);return React.createElement("div",null,React.createElement("label",{style:{fontSize:13,fontWeight:500,color:"#111",marginBottom:6,display:"block"}},p.label),React.createElement("div",{style:{position:"relative"}},React.createElement("span",{style:{position:"absolute",left:11,top:"50%",transform:"translateY(-50%)",color:"#a1a1aa",pointerEvents:"none",zIndex:1,display:"flex"}},p.icon),React.createElement("input",{value:p.val,onChange:function(e){p.set(e.target.value)},placeholder:p.placeholder,type:p.type||"text",onFocus:function(){setH(true)},onBlur:function(){setH(false)},style:{width:"100%",padding:"10px 12px 10px 36px",border:h?"1.5px solid #111":"1.5px solid #e4e4e7",borderRadius:p.r-2,fontSize:14,outline:"none",boxSizing:"border-box",fontFamily:"inherit",background:"#fafafa",transition:"border-color 0.12s"}}),p.right?React.createElement("span",{style:{position:"absolute",right:10,top:"50%",transform:"translateY(-50%)"}},p.right()):null))}
 function RShow(p){return React.createElement("button",{onClick:function(){p.set(function(v){return!v})},style:{background:"none",border:"none",padding:4,cursor:"pointer",color:"#a1a1aa",display:"flex",fontSize:"inherit"}},p.show?React.createElement("svg",{width:14,height:14,viewBox:"0 0 24 24",fill:"none",stroke:"currentColor",strokeWidth:2},React.createElement("path",{d:"M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"}),React.createElement("path",{d:"M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"}),React.createElement("line",{x1:1,y1:1,x2:23,y2:23})):React.createElement("svg",{width:14,height:14,viewBox:"0 0 24 24",fill:"none",stroke:"currentColor",strokeWidth:2},React.createElement("path",{d:"M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"}),React.createElement("circle",{cx:12,cy:12,r:3})))}
-function Soc(p){return React.createElement(React.Fragment,null,React.createElement("div",{style:{display:"flex",flexDirection:"column",gap:p.gap||8,marginBottom:p.mb||16}},p.showGoogle?React.createElement("button",{style:{width:"100%",padding:"9px 0",borderRadius:p.r-2,background:"transparent",border:"1px solid #e4e4e7",color:"#111",fontSize:13.5,fontWeight:500,cursor:"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",justifyContent:"center",gap:10}},React.createElement("svg",{width:16,height:16,viewBox:"0 0 24 24",fill:"none",stroke:"currentColor",strokeWidth:2},React.createElement("circle",{cx:12,cy:12,r:10}),React.createElement("path",{d:"M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"})),"Continue with Google"):null,p.showGitHub?React.createElement("button",{style:{width:"100%",padding:"9px 0",borderRadius:p.r-2,background:"transparent",border:"1px solid #e4e4e7",color:"#111",fontSize:13.5,fontWeight:500,cursor:"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",justifyContent:"center",gap:10}},React.createElement("svg",{width:16,height:16,viewBox:"0 0 24 24",fill:"none",stroke:"currentColor",strokeWidth:2},React.createElement("path",{d:"M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"}),React.createElement("path",{d:"M9 18c-4.51 2-5-2-7-2"})),"Continue with GitHub"):null),React.createElement("div",{style:{display:"flex",alignItems:"center",gap:10,marginBottom:16}},React.createElement("div",{style:{flex:1,height:1,background:"#e4e4e7"}}),React.createElement("span",{style:{fontSize:11.5,color:"#d4d4d8",fontWeight:500}},"OR"),React.createElement("div",{style:{flex:1,height:1,background:"#e4e4e7"}})))}
+function Soc(p){var b={width:"100%",padding:"9px 0",borderRadius:p.r-2,background:"transparent",border:"1px solid #e4e4e7",color:"#111",fontSize:13.5,fontWeight:500,cursor:"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",justifyContent:"center",gap:10,boxSizing:"border-box"};return React.createElement(React.Fragment,null,React.createElement("div",{style:{display:"flex",flexDirection:"column",gap:p.gap||8,marginBottom:p.mb||16}},p.showGoogle?React.createElement("button",{style:b},React.createElement("svg",{width:16,height:16,viewBox:"0 0 24 24"},React.createElement("path",{fill:"currentColor",d:"M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"}),React.createElement("path",{fill:"currentColor",d:"M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"}),React.createElement("path",{fill:"currentColor",d:"M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"}),React.createElement("path",{fill:"currentColor",d:"M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"})),"Continue with Google"):null,p.showGitHub?React.createElement("button",{style:b},React.createElement("svg",{width:16,height:16,viewBox:"0 0 24 24",fill:"none",stroke:"currentColor",strokeWidth:2},React.createElement("path",{d:"M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"}),React.createElement("path",{d:"M9 18c-4.51 2-5-2-7-2"})),"Continue with GitHub"):null,p.showApple?React.createElement("button",{style:b},React.createElement("svg",{width:16,height:16,viewBox:"0 0 24 24",fill:"currentColor"},React.createElement("path",{d:"M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C5.18 17.22 4.57 13.5 5.98 10.9c.88-1.6 2.28-2.6 3.9-2.6 1.36 0 2.36.72 3.2.72.85 0 2.26-.8 3.96-.68 1.26.05 2.6.65 3.48 1.82-.3.2-2.08 1.18-2.08 3.56 0 2.6 2.2 3.56 2.32 3.6-.1.4-.64 2.04-1.71 3.28zM15.04 4.5c.2-1.06.75-2.07 1.45-2.8.85-.88 2.08-1.35 2.9-1.35.04 1.12-.35 2.28-1.1 3.16-.65.78-1.8 1.52-2.85 1.42-.1-1.07.24-2.04 1.1-2.78z"})),"Continue with Apple"):null,p.showMagicLink?React.createElement("button",{style:b},React.createElement("svg",{width:16,height:16,viewBox:"0 0 24 24",fill:"none",stroke:"currentColor",strokeWidth:2},React.createElement("rect",{x:2,y:4,width:20,height:16,rx:2}),React.createElement("path",{d:"m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"})),"Magic Link"):null),React.createElement("div",{style:{display:"flex",alignItems:"center",gap:10,marginBottom:16}},React.createElement("div",{style:{flex:1,height:1,background:"#e4e4e7"}}),React.createElement("span",{style:{fontSize:11.5,color:"#d4d4d8",fontWeight:500}},"OR"),React.createElement("div",{style:{flex:1,height:1,background:"#e4e4e7"}})))}
 function Btn(p){return React.createElement("button",{onClick:p.onClick,disabled:p.loading,style:{width:"100%",marginTop:16,padding:"10px 0",borderRadius:p.r-2,background:p.loading?"#6b7280":"#111",color:"#fff",border:"none",fontSize:14,fontWeight:590,cursor:p.loading?"not-allowed":"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",justifyContent:"center",gap:8}},p.loading?React.createElement("svg",{width:16,height:16,viewBox:"0 0 24 24",fill:"none",stroke:"currentColor",strokeWidth:2.5,style:{animation:"forge-spin .6s linear infinite"}},React.createElement("path",{d:"M21 12a9 9 0 1 1-6.219-8.56",strokeLinecap:"round"})):null,p.children)}`
   switch (componentId) {
     case "forge-button": {
@@ -155,51 +155,214 @@ function Btn(p){return React.createElement("button",{onClick:p.onClick,disabled:
     }
 
     case "forge-auth-sign-in": {
-      return `  const[email,setEmail]=useState("");const[password,setPassword]=useState("");const[loading,setLoading]=useState(false);const[showPw,setShowPw]=useState(false);const[err,setErr]=useState("")
-  const handle=async function(){if(!email){setErr("Email required");return}if(!password){setErr("Password required");return}setLoading(true);setErr("");try{await new Promise(function(r){setTimeout(r,1200)})}catch(e){setErr(e.message)}finally{setLoading(false)}}
-  return(<div style={ws}>
-    <div style={{width:"100%",maxWidth:cw,background:"#fff",border:"1px solid #e4e4e7",borderRadius,padding:"28px 24px",margin:"0 auto",boxShadow:"0 1px 3px rgba(0,0,0,0.04), 0 8px 32px rgba(0,0,0,0.06)",boxSizing:"border-box"}}>
-      <div style={{textAlign:"center",marginBottom:24}}>
-        <div style={{width:36,height:36,borderRadius:9,background:"#111",display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontSize:16,fontWeight:700,margin:"0 auto 16px"}}>F</div>
-        <div style={{fontSize:19,fontWeight:650,color:"#111",letterSpacing:"-.02em"}}>Welcome back</div>
-        <div style={{fontSize:13.5,color:"#a1a1aa",marginTop:4}}>Sign in to continue.</div>
+      return `  const[view,setView]=useState("sign-in")
+  const[email,setEmail]=useState("");const[password,setPassword]=useState("");const[confirmPassword,setConfirmPassword]=useState("");const[name,setName]=useState("");const[loading,setLoading]=useState(false);const[showPw,setShowPw]=useState(false);const[err,setErr]=useState("");const[sent,setSent]=useState(false)
+  const handleSignIn=async function(){if(!email){setErr("Email required");return}if(!password){setErr("Password required");return}setLoading(true);setErr("");try{await new Promise(function(r){setTimeout(r,1200)})}catch(e){setErr(e.message)}finally{setLoading(false)}}
+  const handleSignUp=async function(){if(!name){setErr("Name required");return}if(!email){setErr("Email required");return}if(!password){setErr("Password required");return}if(password!==confirmPassword){setErr("Passwords do not match");return}setLoading(true);setErr("");try{await new Promise(function(r){setTimeout(r,1200)})}catch(e){setErr(e.message)}finally{setLoading(false)}}
+  const handleForgot=async function(){if(!email){setErr("Email required");return}setLoading(true);setErr("");try{await new Promise(function(r){setTimeout(r,1200)});setSent(true)}catch(e){setErr(e.message)}finally{setLoading(false)}}
+  const handleReset=async function(){if(!password){setErr("Password required");return}if(password!==confirmPassword){setErr("Passwords do not match");return}setLoading(true);setErr("");try{await new Promise(function(r){setTimeout(r,1200)});setSent(true)}catch(e){setErr(e.message)}finally{setLoading(false)}}
+  const card={width:"100%",maxWidth:cw,background:"#fff",border:"1px solid #e4e4e7",borderRadius,padding:Math.max(20,Math.min(32,Math.round(padding)))+"px 24px",margin:"0 auto",boxShadow:"0 1px 3px rgba(0,0,0,0.04), 0 8px 32px rgba(0,0,0,0.06)",boxSizing:"border-box"}
+  const hasSocial=showGoogle||showGitHub||showApple||showMagicLink
+  function go(v){setErr("");setView(v)}
+  // Sign In view
+  if(view==="sign-in"){
+    return(<div style={ws}>
+      <div style={card}>
+        <div style={{textAlign:"center",marginBottom:24}}>
+          <div style={{width:36,height:36,borderRadius:9,background:"#111",display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontSize:16,fontWeight:700,margin:"0 auto 16px"}}>F</div>
+          <div style={{fontSize:19,fontWeight:650,color:"#111",letterSpacing:"-.02em"}}>Welcome back</div>
+          <div style={{fontSize:13.5,color:"#a1a1aa",marginTop:4}}>Sign in to continue.</div>
+        </div>
+        <div style={{display:"flex",flexDirection:"column",gap:14}}>
+          <Fld label="Email address" icon={EmIco} val={email} set={setEmail} placeholder="jane@example.com" type="email" r={borderRadius}/>
+          <Fld label="Password" icon={PwIco} val={password} set={setPassword} placeholder="Enter your password" type={showPw?"text":"password"} r={borderRadius} right={function(){return<RShow show={showPw} set={setShowPw}/>}}/>
+        </div>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginTop:12}}>
+          {showRememberMe&&<label style={{display:"flex",alignItems:"center",gap:6,fontSize:13,color:"#a1a1aa",cursor:"pointer"}}><input type="checkbox" style={{accentColor:"#111"}}/> Remember me</label>}
+          <span onClick={function(){go("forgot-password")}} style={{fontSize:13,color:"#6366f1",fontWeight:500,cursor:"pointer",marginLeft:showRememberMe?"auto":0}}>Forgot password?</span>
+        </div>
+        {err&&<div style={{marginTop:12,padding:"8px 12px",borderRadius:borderRadius-4,background:"#fef2f2",border:"1px solid #fecaca",color:"#dc2626",fontSize:12.5}}>{err}</div>}
+        <Btn onClick={handleSignIn} loading={loading} r={borderRadius}>{loading?"Signing in\u2026":buttonText}</Btn>
+        {hasSocial&&<div style={{marginTop:16}}><Soc gap={8} mb={0} showGoogle={showGoogle} showGitHub={showGitHub} showApple={showApple} showMagicLink={showMagicLink} r={borderRadius}/></div>}
+        <div style={{marginTop:18,textAlign:"center",fontSize:13,color:"#a1a1aa"}}>Don't have an account? <span onClick={function(){go("sign-up");setName("");setConfirmPassword("")}} style={{color:"#6366f1",fontWeight:500,cursor:"pointer"}}>Create one</span></div>
       </div>
-      {(showGoogle||showGitHub)&&<Soc gap={8} mb={16} showGoogle={showGoogle} showGitHub={showGitHub} r={borderRadius}/>}
-      <div style={{display:"flex",flexDirection:"column",gap:14}}>
+    </div>)
+  }
+  // Sign Up view
+  if(view==="sign-up"){
+    return(<div style={ws}>
+      <div style={card}>
+        <div style={{textAlign:"center",marginBottom:24}}>
+          <div style={{width:36,height:36,borderRadius:9,background:"#111",display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontSize:16,fontWeight:700,margin:"0 auto 16px"}}>F</div>
+          <div style={{fontSize:19,fontWeight:650,color:"#111",letterSpacing:"-.02em"}}>Create your account</div>
+          <div style={{fontSize:13.5,color:"#a1a1aa",marginTop:4}}>Get started free.</div>
+        </div>
+        <div style={{display:"flex",flexDirection:"column",gap:14}}>
+          <Fld label="Full name" icon={NmIco} val={name} set={setName} placeholder="Jane Doe" r={borderRadius}/>
+          <Fld label="Email address" icon={EmIco} val={email} set={setEmail} placeholder="jane@example.com" type="email" r={borderRadius}/>
+          <Fld label="Password" icon={PwIco} val={password} set={setPassword} placeholder="Create a password" type={showPw?"text":"password"} r={borderRadius} right={function(){return<RShow show={showPw} set={setShowPw}/>}}/>
+          <Fld label="Confirm password" icon={PwIco} val={confirmPassword} set={setConfirmPassword} placeholder="Re-enter password" type="password" r={borderRadius}/>
+        </div>
+        {showTerms&&<label style={{display:"flex",alignItems:"center",gap:6,marginTop:12,fontSize:13,color:"#a1a1aa",cursor:"pointer"}}><input type="checkbox" style={{accentColor:"#111"}}/> I agree to the Terms & Privacy Policy</label>}
+        {err&&<div style={{marginTop:12,padding:"8px 12px",borderRadius:borderRadius-4,background:"#fef2f2",border:"1px solid #fecaca",color:"#dc2626",fontSize:12.5}}>{err}</div>}
+        <Btn onClick={handleSignUp} loading={loading} r={borderRadius}>{loading?"Creating account\u2026":buttonText}</Btn>
+        {hasSocial&&<div style={{marginTop:16}}><Soc gap={8} mb={0} showGoogle={showGoogle} showGitHub={showGitHub} showApple={showApple} showMagicLink={showMagicLink} r={borderRadius}/></div>}
+        <div style={{marginTop:18,textAlign:"center",fontSize:13,color:"#a1a1aa"}}>Already have an account? <span onClick={function(){go("sign-in");setPassword("")}} style={{color:"#6366f1",fontWeight:500,cursor:"pointer"}}>Sign in</span></div>
+      </div>
+    </div>)
+  }
+  // Forgot Password view
+  if(view==="forgot-password"){
+    if(sent)return(<div style={ws}><div style={{...card,textAlign:"center"}}>
+      <div style={{fontSize:36,marginBottom:16}}>📧</div>
+      <div style={{fontSize:17,fontWeight:650,color:"#111",marginBottom:8}}>Check your email</div>
+      <div style={{fontSize:13,color:"#a1a1aa",lineHeight:1.5}}>We've sent a password reset link to {email}. It may take a few minutes to arrive.</div>
+      <div style={{marginTop:18}}><span onClick={function(){go("sign-in");setSent(false)}} style={{color:"#6366f1",fontWeight:500,cursor:"pointer",fontSize:13}}>Back to sign in</span></div>
+    </div></div>)
+    return(<div style={ws}>
+      <div style={card}>
+        <div style={{textAlign:"center",marginBottom:24}}>
+          <div style={{fontSize:28,marginBottom:12}}>🔑</div>
+          <div style={{fontSize:19,fontWeight:650,color:"#111",letterSpacing:"-.02em"}}>Forgot password?</div>
+          <div style={{fontSize:13.5,color:"#a1a1aa",marginTop:4}}>Enter your email and we'll send you a reset link.</div>
+        </div>
         <Fld label="Email address" icon={EmIco} val={email} set={setEmail} placeholder="jane@example.com" type="email" r={borderRadius}/>
-        <Fld label="Password" icon={PwIco} val={password} set={setPassword} placeholder="Enter your password" type={showPw?"text":"password"} r={borderRadius} right={function(){return<RShow show={showPw} set={setShowPw}/>}}/>
+        {err&&<div style={{marginTop:12,padding:"8px 12px",borderRadius:borderRadius-4,background:"#fef2f2",border:"1px solid #fecaca",color:"#dc2626",fontSize:12.5}}>{err}</div>}
+        <Btn onClick={handleForgot} loading={loading} r={borderRadius}>{loading?"Sending\u2026":"Send Reset Link"}</Btn>
+        <div style={{marginTop:18,textAlign:"center",fontSize:13,color:"#a1a1aa"}}><span onClick={function(){go("sign-in")}} style={{color:"#6366f1",fontWeight:500,cursor:"pointer"}}>Back to sign in</span></div>
       </div>
-      {showRememberMe&&<label style={{display:"flex",alignItems:"center",gap:6,marginTop:12,fontSize:13,color:"#a1a1aa",cursor:"pointer"}}><input type="checkbox" style={{accentColor:"#111"}}/> Remember me</label>}
-      {err&&<div style={{marginTop:12,padding:"8px 12px",borderRadius:borderRadius-4,background:"#fef2f2",border:"1px solid #fecaca",color:"#dc2626",fontSize:12.5}}>{err}</div>}
-      <Btn onClick={handle} loading={loading} r={borderRadius}>{loading?"Signing in\u2026":buttonText}</Btn>
-      <div style={{marginTop:18,textAlign:"center",fontSize:13,color:"#a1a1aa"}}>Don't have an account? <span style={{color:"#6366f1",fontWeight:500,cursor:"pointer"}}>Create one</span></div>
-    </div>
-  </div>)`+SP;
+    </div>)
+  }
+  // Reset Password view
+  if(view==="reset-password"){
+    if(sent)return(<div style={ws}><div style={{...card,textAlign:"center"}}>
+      <div style={{fontSize:36,marginBottom:16}}>✅</div>
+      <div style={{fontSize:17,fontWeight:650,color:"#111",marginBottom:8}}>Password reset successful</div>
+      <div style={{fontSize:13,color:"#a1a1aa"}}>Your password has been updated. You can now sign in with your new password.</div>
+      <div style={{marginTop:18}}><span onClick={function(){go("sign-in");setSent(false)}} style={{color:"#6366f1",fontWeight:500,cursor:"pointer",fontSize:13}}>Back to sign in</span></div>
+    </div></div>)
+    return(<div style={ws}>
+      <div style={card}>
+        <div style={{textAlign:"center",marginBottom:24}}>
+          <div style={{width:36,height:36,borderRadius:9,background:"#111",display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontSize:16,fontWeight:700,margin:"0 auto 16px"}}>F</div>
+          <div style={{fontSize:19,fontWeight:650,color:"#111",letterSpacing:"-.02em"}}>Set new password</div>
+          <div style={{fontSize:13.5,color:"#a1a1aa",marginTop:4}}>Must be at least 8 characters.</div>
+        </div>
+        <div style={{display:"flex",flexDirection:"column",gap:14}}>
+          <Fld label="New password" icon={PwIco} val={password} set={setPassword} placeholder="Enter new password" type={showPw?"text":"password"} r={borderRadius} right={function(){return<RShow show={showPw} set={setShowPw}/>}}/>
+          <Fld label="Confirm password" icon={PwIco} val={confirmPassword} set={setConfirmPassword} placeholder="Re-enter new password" type="password" r={borderRadius}/>
+        </div>
+        {err&&<div style={{marginTop:12,padding:"8px 12px",borderRadius:borderRadius-4,background:"#fef2f2",border:"1px solid #fecaca",color:"#dc2626",fontSize:12.5}}>{err}</div>}
+        <Btn onClick={handleReset} loading={loading} r={borderRadius}>{loading?"Resetting\u2026":"Reset Password"}</Btn>
+      </div>
+    </div>)
+  }
+  return null`+SP;
     }
     case "forge-auth-sign-up": {
-      return `
-  const[name,setName]=useState("");const[email,setEmail]=useState("");const[password,setPassword]=useState("");const[cp,setCp]=useState("");const[loading,setLoading]=useState(false);const[showPw,setShowPw]=useState(false);const[err,setErr]=useState("")
-  const handle=async function(){if(!name){setErr("Name required");return}if(!email){setErr("Email required");return}if(!password){setErr("Password required");return}if(password!==cp){setErr("Passwords do not match");return}setLoading(true);setErr("");try{await new Promise(function(r){setTimeout(r,1200)})}catch(e){setErr(e.message)}finally{setLoading(false)}}
-  return(<div style={ws}>
-    <div style={{width:"100%",maxWidth:cw,background:"#fff",border:"1px solid #e4e4e7",borderRadius,padding:"28px 24px",margin:"0 auto",boxShadow:"0 1px 3px rgba(0,0,0,0.04), 0 8px 32px rgba(0,0,0,0.06)",boxSizing:"border-box"}}>
-      <div style={{textAlign:"center",marginBottom:24}}>
-        <div style={{width:36,height:36,borderRadius:9,background:"#111",display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontSize:16,fontWeight:700,margin:"0 auto 16px"}}>F</div>
-        <div style={{fontSize:19,fontWeight:650,color:"#111",letterSpacing:"-.02em"}}>Create your account</div>
-        <div style={{fontSize:13.5,color:"#a1a1aa",marginTop:4}}>Get started free.</div>
+      return `  const[view,setView]=useState("sign-up")
+  const[email,setEmail]=useState("");const[password,setPassword]=useState("");const[confirmPassword,setConfirmPassword]=useState("");const[name,setName]=useState("");const[loading,setLoading]=useState(false);const[showPw,setShowPw]=useState(false);const[err,setErr]=useState("");const[sent,setSent]=useState(false)
+  const handleSignIn=async function(){if(!email){setErr("Email required");return}if(!password){setErr("Password required");return}setLoading(true);setErr("");try{await new Promise(function(r){setTimeout(r,1200)})}catch(e){setErr(e.message)}finally{setLoading(false)}}
+  const handleSignUp=async function(){if(!name){setErr("Name required");return}if(!email){setErr("Email required");return}if(!password){setErr("Password required");return}if(password!==confirmPassword){setErr("Passwords do not match");return}setLoading(true);setErr("");try{await new Promise(function(r){setTimeout(r,1200)})}catch(e){setErr(e.message)}finally{setLoading(false)}}
+  const handleForgot=async function(){if(!email){setErr("Email required");return}setLoading(true);setErr("");try{await new Promise(function(r){setTimeout(r,1200)});setSent(true)}catch(e){setErr(e.message)}finally{setLoading(false)}}
+  const handleReset=async function(){if(!password){setErr("Password required");return}if(password!==confirmPassword){setErr("Passwords do not match");return}setLoading(true);setErr("");try{await new Promise(function(r){setTimeout(r,1200)});setSent(true)}catch(e){setErr(e.message)}finally{setLoading(false)}}
+  const card={width:"100%",maxWidth:cw,background:"#fff",border:"1px solid #e4e4e7",borderRadius,padding:Math.max(20,Math.min(32,Math.round(padding)))+"px 24px",margin:"0 auto",boxShadow:"0 1px 3px rgba(0,0,0,0.04), 0 8px 32px rgba(0,0,0,0.06)",boxSizing:"border-box"}
+  const hasSocial=showGoogle||showGitHub||showApple||showMagicLink
+  function go(v){setErr("");setView(v)}
+  // Sign In view
+  if(view==="sign-in"){
+    return(<div style={ws}>
+      <div style={card}>
+        <div style={{textAlign:"center",marginBottom:24}}>
+          <div style={{width:36,height:36,borderRadius:9,background:"#111",display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontSize:16,fontWeight:700,margin:"0 auto 16px"}}>F</div>
+          <div style={{fontSize:19,fontWeight:650,color:"#111",letterSpacing:"-.02em"}}>Welcome back</div>
+          <div style={{fontSize:13.5,color:"#a1a1aa",marginTop:4}}>Sign in to continue.</div>
+        </div>
+        <div style={{display:"flex",flexDirection:"column",gap:14}}>
+          <Fld label="Email address" icon={EmIco} val={email} set={setEmail} placeholder="jane@example.com" type="email" r={borderRadius}/>
+          <Fld label="Password" icon={PwIco} val={password} set={setPassword} placeholder="Enter your password" type={showPw?"text":"password"} r={borderRadius} right={function(){return<RShow show={showPw} set={setShowPw}/>}}/>
+        </div>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginTop:12}}>
+          {showRememberMe&&<label style={{display:"flex",alignItems:"center",gap:6,fontSize:13,color:"#a1a1aa",cursor:"pointer"}}><input type="checkbox" style={{accentColor:"#111"}}/> Remember me</label>}
+          <span onClick={function(){go("forgot-password")}} style={{fontSize:13,color:"#6366f1",fontWeight:500,cursor:"pointer",marginLeft:showRememberMe?"auto":0}}>Forgot password?</span>
+        </div>
+        {err&&<div style={{marginTop:12,padding:"8px 12px",borderRadius:borderRadius-4,background:"#fef2f2",border:"1px solid #fecaca",color:"#dc2626",fontSize:12.5}}>{err}</div>}
+        <Btn onClick={handleSignIn} loading={loading} r={borderRadius}>{loading?"Signing in\u2026":buttonText}</Btn>
+        {hasSocial&&<div style={{marginTop:16}}><Soc gap={8} mb={0} showGoogle={showGoogle} showGitHub={showGitHub} showApple={showApple} showMagicLink={showMagicLink} r={borderRadius}/></div>}
+        <div style={{marginTop:18,textAlign:"center",fontSize:13,color:"#a1a1aa"}}>Don't have an account? <span onClick={function(){go("sign-up");setName("");setConfirmPassword("")}} style={{color:"#6366f1",fontWeight:500,cursor:"pointer"}}>Create one</span></div>
       </div>
-      {(showGoogle||showGitHub)&&<Soc gap={8} mb={16} showGoogle={showGoogle} showGitHub={showGitHub} r={borderRadius}/>}
-      <div style={{display:"flex",flexDirection:"column",gap:14}}>
-        <Fld label="Full name" icon={NmIco} val={name} set={setName} placeholder="Jane Doe" r={borderRadius}/>
+    </div>)
+  }
+  // Sign Up view
+  if(view==="sign-up"){
+    return(<div style={ws}>
+      <div style={card}>
+        <div style={{textAlign:"center",marginBottom:24}}>
+          <div style={{width:36,height:36,borderRadius:9,background:"#111",display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontSize:16,fontWeight:700,margin:"0 auto 16px"}}>F</div>
+          <div style={{fontSize:19,fontWeight:650,color:"#111",letterSpacing:"-.02em"}}>Create your account</div>
+          <div style={{fontSize:13.5,color:"#a1a1aa",marginTop:4}}>Get started free.</div>
+        </div>
+        <div style={{display:"flex",flexDirection:"column",gap:14}}>
+          <Fld label="Full name" icon={NmIco} val={name} set={setName} placeholder="Jane Doe" r={borderRadius}/>
+          <Fld label="Email address" icon={EmIco} val={email} set={setEmail} placeholder="jane@example.com" type="email" r={borderRadius}/>
+          <Fld label="Password" icon={PwIco} val={password} set={setPassword} placeholder="Create a password" type={showPw?"text":"password"} r={borderRadius} right={function(){return<RShow show={showPw} set={setShowPw}/>}}/>
+          <Fld label="Confirm password" icon={PwIco} val={confirmPassword} set={setConfirmPassword} placeholder="Re-enter password" type="password" r={borderRadius}/>
+        </div>
+        {showTerms&&<label style={{display:"flex",alignItems:"center",gap:6,marginTop:12,fontSize:13,color:"#a1a1aa",cursor:"pointer"}}><input type="checkbox" style={{accentColor:"#111"}}/> I agree to the Terms & Privacy Policy</label>}
+        {err&&<div style={{marginTop:12,padding:"8px 12px",borderRadius:borderRadius-4,background:"#fef2f2",border:"1px solid #fecaca",color:"#dc2626",fontSize:12.5}}>{err}</div>}
+        <Btn onClick={handleSignUp} loading={loading} r={borderRadius}>{loading?"Creating account\u2026":buttonText}</Btn>
+        {hasSocial&&<div style={{marginTop:16}}><Soc gap={8} mb={0} showGoogle={showGoogle} showGitHub={showGitHub} showApple={showApple} showMagicLink={showMagicLink} r={borderRadius}/></div>}
+        <div style={{marginTop:18,textAlign:"center",fontSize:13,color:"#a1a1aa"}}>Already have an account? <span onClick={function(){go("sign-in");setPassword("")}} style={{color:"#6366f1",fontWeight:500,cursor:"pointer"}}>Sign in</span></div>
+      </div>
+    </div>)
+  }
+  // Forgot Password view
+  if(view==="forgot-password"){
+    if(sent)return(<div style={ws}><div style={{...card,textAlign:"center"}}>
+      <div style={{fontSize:36,marginBottom:16}}>📧</div>
+      <div style={{fontSize:17,fontWeight:650,color:"#111",marginBottom:8}}>Check your email</div>
+      <div style={{fontSize:13,color:"#a1a1aa",lineHeight:1.5}}>We've sent a password reset link to {email}. It may take a few minutes to arrive.</div>
+      <div style={{marginTop:18}}><span onClick={function(){go("sign-in");setSent(false)}} style={{color:"#6366f1",fontWeight:500,cursor:"pointer",fontSize:13}}>Back to sign in</span></div>
+    </div></div>)
+    return(<div style={ws}>
+      <div style={card}>
+        <div style={{textAlign:"center",marginBottom:24}}>
+          <div style={{fontSize:28,marginBottom:12}}>🔑</div>
+          <div style={{fontSize:19,fontWeight:650,color:"#111",letterSpacing:"-.02em"}}>Forgot password?</div>
+          <div style={{fontSize:13.5,color:"#a1a1aa",marginTop:4}}>Enter your email and we'll send you a reset link.</div>
+        </div>
         <Fld label="Email address" icon={EmIco} val={email} set={setEmail} placeholder="jane@example.com" type="email" r={borderRadius}/>
-        <Fld label="Password" icon={PwIco} val={password} set={setPassword} placeholder="Create a password" type={showPw?"text":"password"} r={borderRadius} right={function(){return<RShow show={showPw} set={setShowPw}/>}}/>
-        <Fld label="Confirm password" icon={PwIco} val={cp} set={setCp} placeholder="Re-enter password" type="password" r={borderRadius}/>
+        {err&&<div style={{marginTop:12,padding:"8px 12px",borderRadius:borderRadius-4,background:"#fef2f2",border:"1px solid #fecaca",color:"#dc2626",fontSize:12.5}}>{err}</div>}
+        <Btn onClick={handleForgot} loading={loading} r={borderRadius}>{loading?"Sending\u2026":"Send Reset Link"}</Btn>
+        <div style={{marginTop:18,textAlign:"center",fontSize:13,color:"#a1a1aa"}}><span onClick={function(){go("sign-in")}} style={{color:"#6366f1",fontWeight:500,cursor:"pointer"}}>Back to sign in</span></div>
       </div>
-      {showTerms&&<label style={{display:"flex",alignItems:"center",gap:6,marginTop:12,fontSize:13,color:"#a1a1aa",cursor:"pointer"}}><input type="checkbox" style={{accentColor:"#111"}}/> I agree to the Terms & Privacy Policy</label>}
-      {err&&<div style={{marginTop:12,padding:"8px 12px",borderRadius:borderRadius-4,background:"#fef2f2",border:"1px solid #fecaca",color:"#dc2626",fontSize:12.5}}>{err}</div>}
-      <Btn onClick={handle} loading={loading} r={borderRadius}>{loading?"Creating account\u2026":buttonText}</Btn>
-      <div style={{marginTop:18,textAlign:"center",fontSize:13,color:"#a1a1aa"}}>Already have an account? <span style={{color:"#6366f1",fontWeight:500,cursor:"pointer"}}>Sign in</span></div>
-    </div>
-  </div>)`+SP;
+    </div>)
+  }
+  // Reset Password view
+  if(view==="reset-password"){
+    if(sent)return(<div style={ws}><div style={{...card,textAlign:"center"}}>
+      <div style={{fontSize:36,marginBottom:16}}>✅</div>
+      <div style={{fontSize:17,fontWeight:650,color:"#111",marginBottom:8}}>Password reset successful</div>
+      <div style={{fontSize:13,color:"#a1a1aa"}}>Your password has been updated. You can now sign in with your new password.</div>
+      <div style={{marginTop:18}}><span onClick={function(){go("sign-in");setSent(false)}} style={{color:"#6366f1",fontWeight:500,cursor:"pointer",fontSize:13}}>Back to sign in</span></div>
+    </div></div>)
+    return(<div style={ws}>
+      <div style={card}>
+        <div style={{textAlign:"center",marginBottom:24}}>
+          <div style={{width:36,height:36,borderRadius:9,background:"#111",display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontSize:16,fontWeight:700,margin:"0 auto 16px"}}>F</div>
+          <div style={{fontSize:19,fontWeight:650,color:"#111",letterSpacing:"-.02em"}}>Set new password</div>
+          <div style={{fontSize:13.5,color:"#a1a1aa",marginTop:4}}>Must be at least 8 characters.</div>
+        </div>
+        <div style={{display:"flex",flexDirection:"column",gap:14}}>
+          <Fld label="New password" icon={PwIco} val={password} set={setPassword} placeholder="Enter new password" type={showPw?"text":"password"} r={borderRadius} right={function(){return<RShow show={showPw} set={setShowPw}/>}}/>
+          <Fld label="Confirm password" icon={PwIco} val={confirmPassword} set={setConfirmPassword} placeholder="Re-enter new password" type="password" r={borderRadius}/>
+        </div>
+        {err&&<div style={{marginTop:12,padding:"8px 12px",borderRadius:borderRadius-4,background:"#fef2f2",border:"1px solid #fecaca",color:"#dc2626",fontSize:12.5}}>{err}</div>}
+        <Btn onClick={handleReset} loading={loading} r={borderRadius}>{loading?"Resetting\u2026":"Reset Password"}</Btn>
+      </div>
+    </div>)
+  }
+  return null`+SP;
     }
     case "forge-auth-forgot-password": {
       return `
@@ -695,12 +858,12 @@ export const COMPONENT_REGISTRY: ComponentEntry[] = [
   }},
   { id: "forge-auth-sign-in", schema: {
     name: "Sign In", description: "Email + password sign in form", category: "auth",
-    props: { buttonText: { type: "string", label: "Button text", defaultValue: "Sign In" }, showGoogle: { type: "boolean", label: "Google provider", defaultValue: true }, showGitHub: { type: "boolean", label: "GitHub provider", defaultValue: true }, showRememberMe: { type: "boolean", label: "Remember me", defaultValue: true }, borderRadius: { type: "number", label: "Border radius", defaultValue: 12 }, width: { type: "number", label: "Width", defaultValue: 400 } },
+    props: { buttonText: { type: "string", label: "Button text", defaultValue: "Sign In" }, showGoogle: { type: "boolean", label: "Google provider", defaultValue: true }, showGitHub: { type: "boolean", label: "GitHub provider", defaultValue: true }, showApple: { type: "boolean", label: "Apple provider", defaultValue: false }, showMagicLink: { type: "boolean", label: "Magic Link", defaultValue: false }, showRememberMe: { type: "boolean", label: "Remember me", defaultValue: true }, showTerms: { type: "boolean", label: "Terms checkbox", defaultValue: false }, borderRadius: { type: "number", label: "Border radius", defaultValue: 12 }, width: { type: "number", label: "Width", defaultValue: 400 } },
     events: { signin: { label: "On sign in" } }, supportsChildren: false,
   }},
   { id: "forge-auth-sign-up", schema: {
     name: "Sign Up", description: "Registration form with name, email, password", category: "auth",
-    props: { buttonText: { type: "string", label: "Button text", defaultValue: "Create Account" }, showGoogle: { type: "boolean", label: "Google provider", defaultValue: true }, showGitHub: { type: "boolean", label: "GitHub provider", defaultValue: true }, showTerms: { type: "boolean", label: "Terms checkbox", defaultValue: false }, borderRadius: { type: "number", label: "Border radius", defaultValue: 12 }, width: { type: "number", label: "Width", defaultValue: 400 } },
+    props: { buttonText: { type: "string", label: "Button text", defaultValue: "Create Account" }, showGoogle: { type: "boolean", label: "Google provider", defaultValue: true }, showGitHub: { type: "boolean", label: "GitHub provider", defaultValue: true }, showApple: { type: "boolean", label: "Apple provider", defaultValue: false }, showMagicLink: { type: "boolean", label: "Magic Link", defaultValue: false }, showRememberMe: { type: "boolean", label: "Remember me", defaultValue: true }, showTerms: { type: "boolean", label: "Terms checkbox", defaultValue: false }, borderRadius: { type: "number", label: "Border radius", defaultValue: 12 }, width: { type: "number", label: "Width", defaultValue: 400 } },
     events: { signup: { label: "On sign up" } }, supportsChildren: false,
   }},
   { id: "forge-auth-forgot-password", schema: {
