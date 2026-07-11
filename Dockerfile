@@ -29,4 +29,4 @@ COPY --from=builder /app/packages ./packages
 
 EXPOSE ${PORT}
 RUN npm install -g prisma@6
-CMD npx prisma db push --skip-generate && node dist/main
+CMD prisma db push --skip-generate && node dist/main
