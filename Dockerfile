@@ -17,7 +17,7 @@ COPY . .
 RUN pnpm --filter @forge/api run build
 RUN cd apps/api && npx prisma generate
 
-FROM node:20-alpine-slim AS runner
+FROM node:20-alpine AS runner
 ENV NODE_ENV=production
 ENV PORT=4000
 WORKDIR /app
