@@ -14,7 +14,7 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/packages ./packages
 COPY . .
-RUN pnpm --filter @forge/api exec prisma generate && pnpm --filter @forge/api run build
+RUN cd apps/api && pnpm exec prisma generate && pnpm exec nest build
 
 FROM node:20-alpine AS runner
 ENV NODE_ENV=production
