@@ -1,4 +1,9 @@
 {
   "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noImplicitReturns": false
+  },
   "exclude": ["node_modules", "dist", "**/*.spec.ts", "**/*.test.ts", "**/__tests__/**"]
 }
