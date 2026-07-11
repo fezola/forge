@@ -1,0 +1,12 @@
+export { ReactiveEngineModule } from './presentation/reactive-engine.module';
+export { BindingService } from './application/binding.service';
+export { ExpressionEvaluatorService } from './application/expression-evaluator.service';
+export { LiveQueryService } from './application/live-query.service';
+export { SubscriptionManagerService } from './application/subscription-manager.service';
+export { SourceResolverService } from './application/source-resolver.service';
+export { ReactiveStateService } from './application/reactive-state.service';
+export type { IBindingRepository } from './domain/binding.repository.interface';
+export type { IDataSourceResolver } from './domain/data-source.resolver.interface';
+export type { IExpressionEvaluator } from './domain/expression-evaluator.interface';
+export type { ILiveQueryExecutor } from './domain/live-query.executor.interface';
+export type { ISubscriptionManager } from './domain/subscription.manager.interface';

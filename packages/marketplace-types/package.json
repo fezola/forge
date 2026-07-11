@@ -1,0 +1,18 @@
+{
+  "name": "@forge/marketplace-types",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Forge Marketplace Types — Shared type definitions for the Marketplace Engine.",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "lint": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
+    "clean": "rimraf dist"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "typescript": "^5.6.3",
+    "rimraf": "^6.0.1"
+  }
+}

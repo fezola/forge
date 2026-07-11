@@ -1,0 +1,1701 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  password  String
+  avatar    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  projects  Project[]
+  sessions  Session[]
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  databases   Database[]
+  storage     Storage[]
+  connectors  Connector[]
+}
+
+model Session {
+  id            String   @id @default(cuid())
+  refreshToken  String   @unique
+  expiresAt     DateTime
+  createdAt     DateTime @default(now())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Database {
+  id        String   @id @default(cuid())
+  name      String
+  engine    String   @default("postgresql")
+  url       String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model Storage {
+  id        String   @id @default(cuid())
+  name      String
+  provider  String   @default("s3")
+  bucket    String
+  region    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model Connector {
+  id        String   @id @default(cuid())
+  name      String
+  type      String
+  config    Json
+  enabled   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+// ---- Storage Engine ----
+
+model StorageBucket {
+  id                String   @id @default(cuid())
+  projectId         String
+  name              String
+  slug              String
+  description       String?
+  visibility        String   @default("private")
+  status            String   @default("active")
+  providerId        String   @default("forge_managed")
+  region            String?
+  maxFileSizeBytes  Int      @default(104857600)
+  allowedMimeTypes  String[]
+  allowedExtensions String[]
+  versioningEnabled Boolean  @default(true)
+  cdnEnabled        Boolean  @default(false)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  createdBy         String
+  metadata          Json?
+  files             StorageFile[]
+  permissions       StoragePermission[]
+
+  @@unique([projectId, slug])
+  @@index([projectId])
+}
+
+model StorageFile {
+  id                String     @id @default(cuid())
+  bucketId          String
+  projectId         String
+  name              String
+  originalName      String
+  extension         String
+  mimeType          String
+  sizeBytes         Int
+  status            String     @default("ready")
+  storagePath       String
+  publicUrl         String?
+  cdnUrl            String?
+  checksum          String
+  checksumAlgorithm String     @default("sha256")
+  width             Int?
+  height            Int?
+  durationMs        Int?
+  tags              String[]
+  folder            String?
+  version           Int        @default(1)
+  isLatestVersion   Boolean    @default(true)
+  parentFileId      String?
+  metadata          Json?
+  uploadedBy        String
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+  deletedAt         DateTime?
+  bucket            StorageBucket @relation(fields: [bucketId], references: [id], onDelete: Cascade)
+  versions          FileVersion[]
+
+  @@index([bucketId])
+  @@index([projectId])
+  @@index([checksum])
+  @@index([folder])
+}
+
+model FileVersion {
+  id            String   @id @default(cuid())
+  fileId        String
+  versionNumber Int
+  sizeBytes     Int
+  storagePath   String
+  checksum      String
+  uploadedBy    String
+  createdAt     DateTime @default(now())
+  metadata      Json?
+  file          StorageFile @relation(fields: [fileId], references: [id], onDelete: Cascade)
+
+  @@index([fileId])
+}
+
+model StoragePermission {
+  id               String   @id @default(cuid())
+  bucketId         String
+  identityId       String?
+  organizationId   String?
+  roleId           String?
+  permissionLevel  String
+  grantedActions   String[]
+  grantedBy        String
+  createdAt        DateTime @default(now())
+  expiresAt        DateTime?
+  bucket           StorageBucket @relation(fields: [bucketId], references: [id], onDelete: Cascade)
+
+  @@index([bucketId])
+  @@index([identityId])
+}
+
+// ---- Resource Engine ----
+
+model ForgeResource {
+  id              String   @id @default(cuid())
+  type            String
+  name            String
+  description     String?
+  slug            String
+  ownerId         String
+  organizationId  String?
+  projectId       String?
+  lifecycleState  String   @default("creating")
+  visibility      String   @default("private")
+  version         Int      @default(1)
+  tags            String[]
+  metadata        Json?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  createdBy       String
+  updatedBy       String
+  archivedAt      DateTime?
+  deletedAt       DateTime?
+  versions        ResourceVersion[]
+  permissions     ResourcePermission[]
+  metadataEntries ResourceMetadata[]
+  comments        ResourceComment[]
+  audits          AuditEntry[]
+  activities      ActivityEntry[]
+  favorites       ResourceFavorite[]
+  health          ResourceHealth[]
+  sourceRelationships ResourceRelationship[] @relation("SourceResource")
+  targetRelationships ResourceRelationship[] @relation("TargetResource")
+
+  @@unique([type, slug])
+  @@index([projectId])
+  @@index([type])
+  @@index([lifecycleState])
+  @@index([ownerId])
+}
+
+model ResourceVersion {
+  id            String   @id @default(cuid())
+  resourceId    String
+  versionNumber Int
+  data          Json
+  diff          Json?
+  createdBy     String
+  createdAt     DateTime @default(now())
+  label         String?
+  resource      ForgeResource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+
+  @@index([resourceId])
+}
+
+model ResourcePermission {
+  id               String   @id @default(cuid())
+  resourceId       String
+  identityId       String?
+  organizationId   String?
+  roleId           String?
+  permissionLevel  String
+  grantedActions   String[]
+  grantedBy        String
+  createdAt        DateTime @default(now())
+  expiresAt        DateTime?
+  resource         ForgeResource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+
+  @@index([resourceId])
+  @@index([identityId])
+}
+
+model ResourceRelationship {
+  id                  String   @id @default(cuid())
+  sourceResourceId    String
+  targetResourceId    String
+  relationshipType    String
+  label               String?
+  metadata            Json?
+  createdAt           DateTime @default(now())
+  createdBy           String
+  sourceResource      ForgeResource @relation("SourceResource", fields: [sourceResourceId], references: [id], onDelete: Cascade)
+  targetResource      ForgeResource @relation("TargetResource", fields: [targetResourceId], references: [id], onDelete: Cascade)
+
+  @@unique([sourceResourceId, targetResourceId, relationshipType])
+  @@index([sourceResourceId])
+  @@index([targetResourceId])
+}
+
+model ResourceMetadata {
+  id            String   @id @default(cuid())
+  resourceId    String
+  key           String
+  value         Json
+  type          String   @default("string")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  createdBy     String
+  resource      ForgeResource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+
+  @@unique([resourceId, key])
+  @@index([resourceId])
+}
+
+model ResourceComment {
+  id          String   @id @default(cuid())
+  resourceId  String
+  parentId    String?
+  authorId    String
+  authorName  String?
+  body        String
+  resolved    Boolean  @default(false)
+  resolvedBy  String?
+  resolvedAt  DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  edited      Boolean  @default(false)
+  resource    ForgeResource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+  parent      ResourceComment? @relation("CommentReplies", fields: [parentId], references: [id])
+  replies     ResourceComment[] @relation("CommentReplies")
+
+  @@index([resourceId])
+}
+
+model AuditEntry {
+  id              String   @id @default(cuid())
+  resourceId      String
+  resourceType    String
+  action          String
+  actorId         String
+  actorName       String?
+  projectId       String?
+  organizationId  String?
+  changes         Json?
+  metadata        Json?
+  timestamp       DateTime @default(now())
+  ip              String?
+  userAgent       String?
+  resource        ForgeResource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+
+  @@index([resourceId])
+  @@index([projectId])
+  @@index([actorId])
+  @@index([timestamp])
+}
+
+model ActivityEntry {
+  id            String   @id @default(cuid())
+  resourceId    String
+  resourceType  String
+  resourceName  String
+  projectId     String?
+  actorId       String
+  actorName     String
+  action        String
+  description   String
+  metadata      Json?
+  timestamp     DateTime @default(now())
+  resource      ForgeResource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+
+  @@index([resourceId])
+  @@index([projectId])
+  @@index([actorId])
+  @@index([timestamp])
+}
+
+model ResourceFavorite {
+  id          String   @id @default(cuid())
+  resourceId  String
+  identityId  String
+  createdAt   DateTime @default(now())
+  label       String?
+  resource    ForgeResource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+
+  @@unique([resourceId, identityId])
+  @@index([identityId])
+}
+
+model ResourceHealth {
+  id              String   @id @default(cuid())
+  resourceId      String
+  resourceType    String
+  status          String   @default("unknown")
+  message         String?
+  lastCheckedAt   DateTime @default(now())
+  lastHealthyAt   DateTime?
+  uptimePercent   Float?
+  metrics         Json?
+  resource        ForgeResource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+  checks          HealthCheck[]
+
+  @@index([resourceId])
+}
+
+model HealthCheck {
+  id          String   @id @default(cuid())
+  healthId    String
+  name        String
+  status      String
+  message     String?
+  durationMs  Int?
+  lastCheckedAt DateTime @default(now())
+  health      ResourceHealth @relation(fields: [healthId], references: [id], onDelete: Cascade)
+
+  @@index([healthId])
+}
+
+model SearchIndex {
+  id              String   @id @default(cuid())
+  resourceId      String   @unique
+  type            String
+  name            String
+  description     String?
+  tags            String[]
+  textContent     String
+  metadata        Json?
+  projectId       String?
+  organizationId  String?
+  ownerId         String?
+  lifecycleState  String
+  createdAt       DateTime
+  updatedAt       DateTime
+
+  @@index([type])
+  @@index([projectId])
+  @@index([name])
+}
+
+// ── Configuration Engine Models ──
+
+model Environment {
+  id                String   @id @default(cuid())
+  projectId         String
+  name              String
+  type              String
+  slug              String
+  description       String?
+  isDefault         Boolean  @default(false)
+  order             Int      @default(0)
+  parentId          String?
+  protected         Boolean  @default(false)
+  requiresApproval  Boolean  @default(false)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  createdBy         String
+
+  configValues      ConfigValue[]
+  promotionRequestsFrom  EnvironmentPromotionRequest[] @relation("PromotionFrom")
+  promotionRequestsTo    EnvironmentPromotionRequest[] @relation("PromotionTo")
+  snapshots         EnvironmentSnapshot[]
+
+  @@unique([projectId, slug])
+  @@index([projectId])
+}
+
+model ConfigEntry {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  type        String
+  visibility  String   @default("protected")
+  status      String   @default("active")
+  source      String   @default("manual")
+  schemaId    String?
+  tags        String[]
+  metadata    Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdBy   String
+  updatedBy   String
+
+  values      ConfigValue[]
+  secrets     Secret[]
+  rotationPolicies SecretRotationPolicy[]
+  auditEntries     ConfigAuditEntry[]
+
+  @@index([type])
+}
+
+model ConfigValue {
+  id                String    @id @default(cuid())
+  configId          String
+  environmentId     String
+  value             String
+  encrypted         Boolean   @default(false)
+  version           Int       @default(1)
+  isValid           Boolean   @default(true)
+  validationMessage String?
+  activatedAt       DateTime?
+  expiresAt         DateTime?
+  createdAt         DateTime  @default(now())
+  createdBy         String
+
+  config            ConfigEntry    @relation(fields: [configId], references: [id], onDelete: Cascade)
+  environment       Environment    @relation(fields: [environmentId], references: [id], onDelete: Cascade)
+
+  @@unique([configId, environmentId, version])
+  @@index([configId])
+  @@index([environmentId])
+}
+
+model Secret {
+  id                  String   @id @default(cuid())
+  configId            String
+  encryptionAlgorithm String   @default("aes-256-gcm")
+  keyVersion          Int      @default(1)
+  encryptedValue      String
+  iv                  String
+  authTag             String?
+  hint                String?
+  status              String   @default("active")
+  expiresAt           DateTime?
+  rotatedAt           DateTime?
+  rotatedFromId       String?
+  createdAt           DateTime @default(now())
+  createdBy           String
+
+  config   ConfigEntry      @relation(fields: [configId], references: [id], onDelete: Cascade)
+  accessLogs SecretAccessLog[]
+
+  @@index([configId])
+  @@index([status])
+}
+
+model SecretRotationPolicy {
+  id               String    @id @default(cuid())
+  configId         String    @unique
+  intervalDays     Int
+  notifyBeforeDays Int       @default(7)
+  enabled          Boolean   @default(true)
+  lastRotatedAt    DateTime?
+  nextRotationAt   DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  config ConfigEntry @relation(fields: [configId], references: [id], onDelete: Cascade)
+}
+
+model SecretAccessLog {
+  id          String   @id @default(cuid())
+  secretId    String
+  configId    String
+  accessedBy  String
+  action      String
+  ip          String?
+  userAgent   String?
+  timestamp   DateTime @default(now())
+
+  secret Secret @relation(fields: [secretId], references: [id], onDelete: Cascade)
+
+  @@index([secretId])
+  @@index([configId])
+}
+
+model FeatureFlag {
+  id                  String   @id @default(cuid())
+  key                 String   @unique
+  name                String
+  description         String?
+  status              String   @default("active")
+  enabled             Boolean  @default(false)
+  rolloutPercentage   Int?
+  sticky              Boolean  @default(false)
+  targetIdentities    String[]
+  targetOrganizations String[]
+  targetProjects      String[]
+  targetEnvironments  String[]
+  requiredPermissions String[]
+  metadata            Json?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  createdBy           String
+
+  overrides FlagOverride[]
+
+  @@index([status])
+}
+
+model FlagOverride {
+  id              String   @id @default(cuid())
+  flagId          String
+  identityId      String?
+  organizationId  String?
+  projectId       String?
+  environmentId   String?
+  enabled         Boolean
+  createdAt       DateTime @default(now())
+  createdBy       String?
+
+  flag FeatureFlag @relation(fields: [flagId], references: [id], onDelete: Cascade)
+
+  @@index([flagId])
+}
+
+model EnvironmentPromotionRequest {
+  id                  String   @id @default(cuid())
+  environmentId       String
+  targetEnvironmentId String
+  configIds           String[]
+  status              String   @default("pending")
+  requestedBy         String
+  approvedBy          String?
+  approvedAt          DateTime?
+  promotedAt          DateTime?
+  createdAt           DateTime @default(now())
+
+  sourceEnvironment Environment @relation("PromotionFrom", fields: [environmentId], references: [id], onDelete: Cascade)
+  targetEnvironment Environment @relation("PromotionTo", fields: [targetEnvironmentId], references: [id], onDelete: Cascade)
+
+  @@index([environmentId])
+  @@index([status])
+}
+
+model EnvironmentSnapshot {
+  id              String   @id @default(cuid())
+  environmentId   String
+  label           String
+  configValues    Json
+  createdAt       DateTime @default(now())
+  createdBy       String
+
+  environment Environment @relation(fields: [environmentId], references: [id], onDelete: Cascade)
+
+  @@index([environmentId])
+}
+
+model ConfigAuditEntry {
+  id              String   @id @default(cuid())
+  configId        String?
+  environmentId   String?
+  projectId       String?
+  organizationId  String?
+  action          String
+  actorId         String
+  actorName       String?
+  details         String?
+  changes         Json?
+  metadata        Json?
+  ip              String?
+  userAgent       String?
+  timestamp       DateTime @default(now())
+
+  config ConfigEntry? @relation(fields: [configId], references: [id])
+
+  @@index([configId])
+  @@index([projectId])
+  @@index([action])
+  @@index([timestamp])
+}
+
+model BrandConfig {
+  projectId       String   @id
+  appName         String
+  logoUrl         String?
+  faviconUrl      String?
+  primaryColor    String?
+  secondaryColor  String?
+  accentColor     String?
+  backgroundColor String?
+  textColor       String?
+  fontFamily      String?
+  email           Json?
+  auth            Json?
+  invoice         Json?
+  dashboard       Json?
+  customCss       String?
+  customVariables Json?
+  metadata        Json?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  createdBy       String   @default("system")
+}
+
+model BlockchainConfig {
+  id                 String   @id @default(cuid())
+  projectId          String
+  chain              String
+  network            String
+  rpcUrl             String?
+  wsUrl              String?
+  explorerUrl        String?
+  chainId            Int?
+  commitment         String?
+  blockTime          Int?
+  confirmationBlocks Int?
+  metadata           Json?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  createdBy          String
+
+  @@unique([projectId, chain, network])
+  @@index([projectId])
+}
+
+model AiConfig {
+  id                      String   @id @default(cuid())
+  projectId               String
+  provider                String
+  apiKey                  String?
+  baseUrl                 String?
+  defaultModel            String?
+  defaultTemperature      Float?
+  defaultMaxTokens        Int?
+  defaultTopP             Float?
+  defaultFrequencyPenalty Float?
+  defaultPresencePenalty  Float?
+  metadata                Json?
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+  createdBy               String
+
+  @@unique([projectId, provider])
+  @@index([projectId])
+}
+
+model CmsCollection {
+  id             String   @id @default(cuid())
+  name           String
+  projectId      String
+  sourceTableId  String?
+  forgeApiKey    String?
+  forgeBaseUrl   String?
+  fieldMapping   Json?
+  lastSyncAt     DateTime?
+  lastSyncStatus String?
+  lastSyncCount  Int?
+  itemCount      Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  syncHistory CmsSyncHistory[]
+
+  @@index([projectId])
+}
+
+model CmsSyncHistory {
+  id            String   @id @default(cuid())
+  collectionId  String
+  status        String   @default("in_progress")
+  startedAt     DateTime @default(now())
+  completedAt   DateTime?
+  itemsAdded    Int      @default(0)
+  itemsUpdated  Int      @default(0)
+  itemsRemoved  Int      @default(0)
+  errors        Int      @default(0)
+  errorMessage  String?
+  metadata      Json?
+
+  collection CmsCollection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+
+  @@index([collectionId])
+  @@index([status])
+  @@index([startedAt])
+}
+
+// ── Payment Engine Models ──
+
+model PaymentProviderConfig {
+  id         String   @id @default(cuid())
+  provider   String   @unique
+  apiKey     String?
+  webhookSecret String?
+  config     Json?
+  enabled    Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Plan {
+  id              String   @id @default(cuid())
+  name            String
+  slug            String   @unique
+  description     String?
+  price           Float
+  currency        String   @default("usd")
+  interval        String   @default("month")
+  trialDays       Int      @default(0)
+  sortOrder       Int      @default(0)
+  active          Boolean  @default(true)
+  public          Boolean  @default(false)
+  maxProjects     Int?
+  maxStorageGb    Float?
+  maxIdentities   Int?
+  maxBandwidthGb  Float?
+  maxApiRequests  Int?
+  features        PlanFeature[]
+  subscriptions   Subscription[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([active])
+  @@index([slug])
+}
+
+model PlanFeature {
+  id        String @id @default(cuid())
+  planId    String
+  key       String
+  name      String
+  value     String
+  highlight Boolean @default(false)
+
+  plan Plan @relation(fields: [planId], references: [id], onDelete: Cascade)
+
+  @@unique([planId, key])
+}
+
+model Subscription {
+  id             String       @id @default(cuid())
+  projectId      String
+  planId         String
+  status         String       @default("active")
+  currentPeriodStart DateTime  @default(now())
+  currentPeriodEnd   DateTime
+  trialEndsAt    DateTime?
+  cancelledAt    DateTime?
+  cancelAtPeriodEnd Boolean   @default(false)
+  providerSubscriptionId String?
+  metadata       Json?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  plan           Plan         @relation(fields: [planId], references: [id])
+  invoices       Invoice[]
+  usage          UsageRecord[]
+
+  @@index([projectId])
+  @@index([status])
+}
+
+// Component Engine Models
+
+model ComponentRegistry {
+  id              String                @id @default(cuid())
+  name            String
+  slug            String                @unique
+  description     String?
+  categoryId      String?
+  type            String                @default("ui")
+  framework       String                @default("react")
+  authorId        String
+  authorName      String?
+  organizationId  String?
+  license         String?
+  thumbnail       String?
+  tags            String[]
+  status          String                @default("draft")
+  isPublic        Boolean               @default(false)
+  installCount    Int                   @default(0)
+  rating          Float?
+  metadata        Json?
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+
+  category        ComponentCategory?    @relation(fields: [categoryId], references: [id])
+  versions        ComponentVersion[]
+  dependencies    ComponentDependency[] @relation("ComponentAsDependency")
+  dependents      ComponentDependency[] @relation("ComponentAsDependent")
+  installations   ComponentInstall[]
+
+  @@index([status])
+  @@index([type])
+  @@index([authorId])
+}
+
+model ComponentVersion {
+  id            String             @id @default(cuid())
+  componentId   String
+  version       String
+  changelog     String?
+  packageUrl    String?
+  sourceUrl     String?
+  entryPoint    String             @default("index.js")
+  dependencies  String[]
+  peerDependencies String[]
+  sizeBytes     Int?
+  checksum      String?
+  metadata      Json?
+  published     Boolean            @default(false)
+  publishedAt   DateTime?
+  createdAt     DateTime           @default(now())
+
+  component     ComponentRegistry  @relation(fields: [componentId], references: [id], onDelete: Cascade)
+
+  @@unique([componentId, version])
+  @@index([componentId])
+}
+
+model ComponentCategory {
+  id          String             @id @default(cuid())
+  name        String
+  slug        String             @unique
+  description String?
+  icon        String?
+  sortOrder   Int                @default(0)
+  parentId    String?
+  createdAt   DateTime           @default(now())
+
+  parent      ComponentCategory? @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children    ComponentCategory[] @relation("CategoryHierarchy")
+  components  ComponentRegistry[]
+
+  @@index([parentId])
+}
+
+model ComponentDependency {
+  id            String            @id @default(cuid())
+  componentId   String
+  dependentId   String
+  versionRange  String            @default("*")
+  type          String            @default("required")
+  createdAt     DateTime          @default(now())
+
+  component     ComponentRegistry @relation("ComponentAsDependency", fields: [componentId], references: [id], onDelete: Cascade)
+  dependent     ComponentRegistry @relation("ComponentAsDependent", fields: [dependentId], references: [id], onDelete: Cascade)
+
+  @@unique([componentId, dependentId])
+}
+
+model ComponentInstall {
+  id              String            @id @default(cuid())
+  componentId     String
+  projectId       String
+  version         String
+  config          Json?
+  status          String            @default("installed")
+  installedBy     String
+  installedAt     DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  component       ComponentRegistry @relation(fields: [componentId], references: [id], onDelete: Cascade)
+
+  @@unique([componentId, projectId])
+  @@index([projectId])
+  @@index([status])
+}
+
+// Marketplace Engine Models
+
+model MarketplaceListing {
+  id              String                 @id @default(cuid())
+  name            String
+  slug            String                 @unique
+  tagline         String?
+  description     String?
+  category        String                 @default("connector")
+  type            String                 @default("free")
+  icon            String?
+  banner          String?
+  authorId        String
+  authorName      String?
+  organizationId  String?
+  license         String?
+  tags            String[]
+  status          String                 @default("draft")
+  featured        Boolean                @default(false)
+  verified        Boolean                @default(false)
+  installCount    Int                    @default(0)
+  rating          Float?
+  reviewCount     Int                    @default(0)
+  docsUrl         String?
+  sourceUrl       String?
+  supportUrl      String?
+  metadata        Json?
+  createdAt       DateTime               @default(now())
+  updatedAt       DateTime               @updatedAt
+
+  versions        MarketplaceVersion[]
+  reviews         MarketplaceReview[]
+  installations   MarketplaceInstall[]
+
+  @@index([status])
+  @@index([category])
+  @@index([featured])
+}
+
+model MarketplaceVersion {
+  id              String             @id @default(cuid())
+  listingId       String
+  version         String
+  changelog       String?
+  packageUrl      String?
+  sizeBytes       Int?
+  minApiVersion   String?
+  maxApiVersion   String?
+  dependencies    String[]
+  checksum        String?
+  published       Boolean            @default(false)
+  publishedAt     DateTime?
+  createdAt       DateTime           @default(now())
+
+  listing         MarketplaceListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@unique([listingId, version])
+  @@index([listingId])
+}
+
+model MarketplaceReview {
+  id          String             @id @default(cuid())
+  listingId   String
+  authorId    String
+  authorName  String?
+  rating      Int
+  title       String?
+  body        String?
+  status      String             @default("approved")
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  listing     MarketplaceListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@unique([listingId, authorId])
+  @@index([listingId])
+  @@index([status])
+}
+
+model MarketplaceInstall {
+  id              String             @id @default(cuid())
+  listingId       String
+  projectId       String
+  version         String
+  status          String             @default("installed")
+  config          Json?
+  installedBy     String
+  installedAt     DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  listing         MarketplaceListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@unique([listingId, projectId])
+  @@index([projectId])
+  @@index([status])
+}
+
+model MarketplaceCollection {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String?
+  icon        String?
+  listingIds  String[]
+  featured    Boolean  @default(false)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([featured])
+}
+
+// Payment Engine Models
+
+model Invoice {
+  id               String    @id @default(cuid())
+  subscriptionId   String
+  invoiceNumber    String    @unique
+  status           String    @default("draft")
+  amount           Float
+  currency         String    @default("usd")
+  description      String?
+  dueDate          DateTime?
+  paidAt           DateTime?
+  paidAmount       Float?
+  providerInvoiceId String?
+  pdfUrl           String?
+  metadata         Json?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  subscription     Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  lineItems        InvoiceLineItem[]
+  payments         Payment[]
+
+  @@index([subscriptionId])
+  @@index([status])
+  @@index([invoiceNumber])
+}
+
+model InvoiceLineItem {
+  id          String  @id @default(cuid())
+  invoiceId   String
+  description String
+  quantity    Int     @default(1)
+  unitPrice   Float
+  amount      Float
+  type        String  @default("subscription")
+
+  invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@index([invoiceId])
+}
+
+model Payment {
+  id               String   @id @default(cuid())
+  invoiceId        String
+  amount           Float
+  currency         String   @default("usd")
+  status           String   @default("pending")
+  method           String?
+  providerPaymentId String?
+  provider         String?
+  fee              Float?
+  netAmount        Float?
+  refundedAt       DateTime?
+  refundAmount     Float?
+  metadata         Json?
+  createdAt        DateTime @default(now())
+
+  invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@index([invoiceId])
+  @@index([status])
+}
+
+model UsageRecord {
+  id             String   @id @default(cuid())
+  subscriptionId String
+  metric         String
+  quantity       Int      @default(1)
+  recordedAt     DateTime @default(now())
+  metadata       Json?
+
+  subscription Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  @@index([subscriptionId])
+  @@index([metric, recordedAt])
+}
+
+model Coupon {
+  id              String   @id @default(cuid())
+  code            String   @unique
+  description     String?
+  discountPercent Float?
+  discountAmount  Float?
+  maxRedemptions  Int?
+  currentRedemptions Int  @default(0)
+  expiresAt       DateTime?
+  active          Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([code])
+  @@index([active])
+}
+
+// ── Blockchain Engine Models ──
+
+model Chain {
+  id              String       @id @default(cuid())
+  name            String
+  slug            String       @unique
+  chainId         Int
+  network         String       @default("mainnet")
+  rpcUrl          String?
+  explorerUrl     String?
+  symbol          String       @default("ETH")
+  decimals        Int          @default(18)
+  enabled         Boolean      @default(true)
+  sortOrder       Int          @default(0)
+  metadata        Json?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  contracts       Contract[]
+
+  @@index([enabled])
+  @@index([chainId])
+}
+
+model Contract {
+  id              String   @id @default(cuid())
+  chainId         String
+  projectId       String
+  address         String
+  name            String
+  type            String   @default("erc20")
+  abi             Json?
+  verified        Boolean  @default(false)
+  verifierUrl     String?
+  deployTxHash    String?
+  deployedBy      String?
+  deployedAt      DateTime?
+  metadata        Json?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  chain           Chain    @relation(fields: [chainId], references: [id])
+
+  @@unique([chainId, address])
+  @@index([projectId])
+  @@index([type])
+}
+
+model Wallet {
+  id               String   @id @default(cuid())
+  address          String
+  chainSlug        String   @default("ethereum")
+  chainId          Int?
+  identityId       String?
+  organizationId   String?
+  label            String?
+  isPrimary        Boolean  @default(false)
+  balance          String?
+  tokenBalance     Json?
+  lastSyncedAt     DateTime?
+  verified         Boolean  @default(false)
+  metadata         Json?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@unique([address, chainSlug])
+  @@index([identityId])
+  @@index([chainSlug])
+}
+
+model Transaction {
+  id                String    @id @default(cuid())
+  hash              String    @unique
+  chainId           String
+  projectId         String?
+  contractId        String?
+  fromAddress       String
+  toAddress         String
+  value             String?
+  data              String?
+  gasLimit          String?
+  gasUsed           String?
+  gasPrice          String?
+  nonce             Int?
+  status            String    @default("pending")
+  blockNumber       Int?
+  timestamp         DateTime?
+  confirmations     Int       @default(0)
+  methodSignature   String?
+  metadata          Json?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([chainId])
+  @@index([fromAddress])
+  @@index([status])
+  @@index([projectId])
+}
+
+model Web3AuthChallenge {
+  id          String   @id @default(cuid())
+  address     String
+  chainSlug   String   @default("ethereum")
+  message     String
+  signature   String?
+  nonce       String
+  expiresAt   DateTime
+  completed   Boolean  @default(false)
+  identityId  String?
+  ip          String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+
+  @@index([address])
+  @@index([nonce])
+  @@index([completed])
+}
+
+model NFTSync {
+  id          String   @id @default(cuid())
+  projectId   String
+  chainSlug   String
+  contractAddress String?
+  identityId  String?
+  type        String   @default("nft")
+  data        Json
+  txHash      String?
+  syncedAt    DateTime @default(now())
+  metadata    Json?
+
+  @@index([projectId])
+  @@index([identityId])
+  @@index([type])
+}
+
+// ── AI Engine Models ──
+
+model AiModel {
+  id             String   @id @default(cuid())
+  provider       String
+  name           String
+  modelId        String   @unique
+  capabilities   String[]
+  contextLength  Int      @default(4096)
+  pricing        Json?
+  enabled        Boolean  @default(true)
+  sortOrder      Int      @default(0)
+  metadata       Json?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([provider])
+  @@index([enabled])
+}
+
+model AiPrompt {
+  id             String   @id @default(cuid())
+  projectId      String
+  name           String
+  slug           String
+  description    String?
+  systemPrompt   String?
+  userTemplate   String?
+  modelId        String?
+  temperature    Float?
+  maxTokens      Int?
+  topP           Float?
+  variables      String[]
+  tags           String[]
+  version        Int      @default(1)
+  metadata       Json?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  completions    AiCompletion[]
+
+  @@unique([projectId, slug])
+  @@index([projectId])
+}
+
+model AiCompletion {
+  id             String   @id @default(cuid())
+  promptId       String?
+  projectId      String
+  modelId        String
+  provider       String
+  promptText     String
+  response       String
+  inputTokens    Int
+  outputTokens   Int
+  totalTokens    Int
+  latencyMs      Int?
+  cost           Float?
+  finishReason   String?
+  temperature    Float?
+  maxTokens      Int?
+  metadata       Json?
+  createdAt      DateTime @default(now())
+
+  aiPrompt       AiPrompt? @relation(fields: [promptId], references: [id])
+
+  @@index([projectId])
+  @@index([promptId])
+  @@index([createdAt])
+}
+
+model AiEmbedding {
+  id             String   @id @default(cuid())
+  projectId      String
+  resourceId     String?
+  resourceType   String?
+  text           String
+  model          String   @default("text-embedding-3-small")
+  dimensions     Int      @default(1536)
+  vector         Float[]
+  metadata       Json?
+  createdAt      DateTime @default(now())
+
+  @@index([projectId])
+  @@index([resourceId])
+}
+
+model AiRagSource {
+  id             String   @id @default(cuid())
+  projectId      String
+  name           String
+  type           String   @default("document")
+  content        String?
+  fileUrl        String?
+  chunkSize      Int      @default(1000)
+  chunkOverlap   Int      @default(200)
+  status         String   @default("pending")
+  chunkCount     Int?
+  errorMessage   String?
+  metadata       Json?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([projectId])
+  @@index([status])
+}
+
+model AiAgent {
+  id             String   @id @default(cuid())
+  projectId      String
+  name           String
+  slug           String
+  description    String?
+  systemPrompt   String
+  modelId        String?
+  temperature    Float?
+  maxTokens      Int?
+  tools          String[]
+  memoryEnabled  Boolean  @default(false)
+  maxMemorySize  Int      @default(50)
+  status         String   @default("active")
+  metadata       Json?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([projectId, slug])
+  @@index([projectId])
+  @@index([status])
+}
+
+// ── Deployment Engine Models ──
+
+model DeploymentEnvironment {
+  id              String   @id @default(cuid())
+  projectId       String
+  name            String
+  slug            String
+  type            String   @default("production")
+  branch          String?
+  autoDeploy      Boolean  @default(false)
+  buildCommand    String?
+  outputDir       String?
+  nodeVersion     String?
+  installCommand  String?
+  envVars         Json?
+  status          String   @default("active")
+  sortOrder       Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  deployments     Deployment[]
+  domains         DeploymentDomain[]
+  buildConfig     DeploymentBuildConfig?
+  secrets         DeploymentSecret[]
+
+  @@unique([projectId, slug])
+  @@index([projectId])
+}
+
+model DeploymentBuildConfig {
+  id              String   @id @default(cuid())
+  environmentId   String   @unique
+  provider        String   @default("docker")
+  dockerfilePath  String?
+  buildArgs       Json?
+  cacheFrom       String[]
+  platform        String?
+  resourceClass   String?
+  timeoutSec      Int?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  environment     DeploymentEnvironment @relation(fields: [environmentId], references: [id], onDelete: Cascade)
+}
+
+model Deployment {
+  id              String    @id @default(cuid())
+  environmentId   String
+  projectId       String
+  version         String
+  status          String    @default("pending")
+  branch          String?
+  commitSha       String?
+  commitMessage   String?
+  commitAuthor    String?
+  commitUrl       String?
+  imageTag        String?
+  containerId     String?
+  url             String?
+  logs            String?
+  errorMessage    String?
+  durationMs      Int?
+  deployedBy      String
+  deployedAt      DateTime?
+  rollbackToId    String?
+  metadata        Json?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  environment     DeploymentEnvironment @relation(fields: [environmentId], references: [id], onDelete: Cascade)
+
+  @@index([environmentId])
+  @@index([projectId])
+  @@index([status])
+}
+
+model DeploymentDomain {
+  id                  String   @id @default(cuid())
+  environmentId       String
+  domain              String
+  status              String   @default("pending")
+  sslStatus           String   @default("pending")
+  sslIssuer           String?
+  sslExpiresAt        DateTime?
+  sslCertificate      String?
+  sslPrivateKey       String?
+  verified            Boolean  @default(false)
+  verificationMethod  String?
+  verificationValue   String?
+  isPrimary           Boolean  @default(false)
+  redirectTo          String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  environment         DeploymentEnvironment @relation(fields: [environmentId], references: [id], onDelete: Cascade)
+
+  @@unique([environmentId, domain])
+  @@index([domain])
+}
+
+model DeploymentSecret {
+  id              String   @id @default(cuid())
+  environmentId   String
+  projectId       String
+  name            String
+  value           String
+  isBuildTime     Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  environment     DeploymentEnvironment @relation(fields: [environmentId], references: [id], onDelete: Cascade)
+
+  @@unique([environmentId, name])
+  @@index([environmentId])
+}
+
+// ── Enterprise Engine Models ──
+
+model SsoProvider {
+  id            String      @id @default(cuid())
+  projectId     String
+  name          String
+  provider      String
+  clientId      String?
+  clientSecret  String?
+  issuer        String?
+  authorizeUrl  String?
+  tokenUrl      String?
+  userInfoUrl   String?
+  scopes        String[]
+  enabled       Boolean     @default(true)
+  autoProvision Boolean     @default(false)
+  defaultRoleId String?
+  metadata      Json?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  domains       SsoDomain[]
+  samlConfig    SamlConfig?
+  oidcConfig    OidcConfig?
+
+  @@index([projectId])
+}
+
+model SsoDomain {
+  id          String      @id @default(cuid())
+  providerId  String
+  domain      String
+  verified    Boolean     @default(false)
+  verifiedAt  DateTime?
+  createdAt   DateTime    @default(now())
+
+  provider    SsoProvider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+
+  @@unique([providerId, domain])
+}
+
+model SamlConfig {
+  id                 String      @id @default(cuid())
+  providerId         String      @unique
+  entityId           String
+  acsUrl             String
+  metadataUrl        String?
+  certificate        String?
+  privateKey         String?
+  signatureAlgorithm String      @default("rsa-sha256")
+  digestAlgorithm    String      @default("sha256")
+  nameIdFormat       String      @default("emailAddress")
+  attributeMapping   Json?
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+
+  provider           SsoProvider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+}
+
+model OidcConfig {
+  id                     String      @id @default(cuid())
+  providerId             String      @unique
+  authorizationEndpoint  String
+  tokenEndpoint          String
+  userInfoEndpoint       String?
+  jwksUri                String?
+  logoutEndpoint         String?
+  clientId               String
+  clientSecret           String?
+  responseType           String      @default("code")
+  grantType              String      @default("authorization_code")
+  scopes                 String[]
+  claimMapping           Json?
+  pkceEnabled            Boolean     @default(true)
+  createdAt              DateTime    @default(now())
+  updatedAt              DateTime    @updatedAt
+
+  provider               SsoProvider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+}
+
+model RbacRole {
+  id          String         @id @default(cuid())
+  projectId   String
+  name        String
+  slug        String
+  description String?
+  isSystem    Boolean        @default(false)
+  sortOrder   Int            @default(0)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  permissions RbacPermission[]
+  members     RbacRoleMember[]
+
+  @@unique([projectId, slug])
+  @@index([projectId])
+}
+
+model RbacPermission {
+  id          String   @id @default(cuid())
+  roleId      String
+  resource    String
+  action      String
+  conditions  Json?
+  effect      String   @default("allow")
+  createdAt   DateTime @default(now())
+
+  role        RbacRole @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@index([roleId])
+  @@unique([roleId, resource, action])
+}
+
+model RbacRoleMember {
+  id          String   @id @default(cuid())
+  roleId      String
+  identityId  String
+  projectId   String?
+  grantedBy   String?
+  grantedAt   DateTime @default(now())
+  expiresAt   DateTime?
+
+  role        RbacRole @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, identityId])
+  @@index([identityId])
+}
+
+model AuditEvent {
+  id              String   @id @default(cuid())
+  projectId       String?
+  organizationId  String?
+  actorId         String
+  actorType       String   @default("identity")
+  actorName       String?
+  action          String
+  resourceType    String
+  resourceId      String?
+  resourceName    String?
+  targetId        String?
+  targetType      String?
+  changes         Json?
+  metadata        Json?
+  ip              String?
+  userAgent       String?
+  sessionId       String?
+  severity        String   @default("info")
+  status          String   @default("success")
+  timestamp       DateTime @default(now())
+  retentionUntil  DateTime?
+
+  @@index([projectId])
+  @@index([organizationId])
+  @@index([actorId])
+  @@index([action])
+  @@index([resourceType])
+  @@index([timestamp])
+  @@index([severity])
+}
+
+model ComplianceReport {
+  id              String   @id @default(cuid())
+  projectId       String?
+  organizationId  String?
+  type            String
+  title           String
+  description     String?
+  status          String   @default("draft")
+  periodStart     DateTime
+  periodEnd       DateTime
+  findings        Json?
+  evidence        Json?
+  score           Float?
+  generatedBy     String
+  generatedAt     DateTime?
+  publishedAt     DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([projectId])
+  @@index([type])
+  @@index([status])
+}
+
+model EnterpriseSettings {
+  id                 String   @id @default(cuid())
+  projectId          String   @unique
+  ssoRequired        Boolean  @default(false)
+  mfaRequired        Boolean  @default(false)
+  mfaMethods         String[] @default(["totp"])
+  passwordPolicy     Json?
+  sessionTimeout     Int      @default(3600)
+  maxLoginAttempts   Int      @default(5)
+  ipWhitelist        String[]
+  ipBlacklist        String[]
+  auditRetentionDays Int      @default(365)
+  allowedDomains     String[]
+  restrictedDomains  String[]
+  metadata           Json?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}

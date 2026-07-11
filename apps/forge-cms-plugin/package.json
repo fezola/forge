@@ -1,0 +1,31 @@
+{
+  "name": "@forge/forge-cms-plugin",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Forge Framer Plugin — 34 code components across 11 categories (Auth, Data, Payment, Blockchain, AI, Storage, Deployment, Enterprise, Marketplace, Connector, UI) + CMS sync.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "@forge/sdk": "workspace:*",
+    "@forge/types": "workspace:*",
+    "framer-plugin": "^3.10.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-basic-ssl": "^2.3.0",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.6.3",
+    "vite": "^6.0.0",
+    "vite-plugin-framer": "^1.0.0"
+  }
+}

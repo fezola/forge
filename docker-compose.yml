@@ -1,0 +1,97 @@
+# =============================================================================
+# Forge Platform — Docker Compose
+# =============================================================================
+# Start:   docker compose up -d
+# Stop:    docker compose down
+# Rebuild: docker compose up -d --build
+# Logs:    docker compose logs -f
+# =============================================================================
+
+services:
+
+  # ── Database ──────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: forge
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-forge_secret}
+      POSTGRES_DB: forge
+    ports:
+      - "5432:5432"
+    volumes:
+      - forge_postgres:/var/lib/postgresql/data
+      - ./apps/api/prisma/schema.prisma:/docker-entrypoint-initdb.d/schema.prisma:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U forge"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Cache ─────────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - forge_redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── API ───────────────────────────────────────────────────────────────────
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      DATABASE_URL: postgresql://forge:${POSTGRES_PASSWORD:-forge_secret}@postgres:5432/forge
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: ${JWT_SECRET:-change-this-to-a-strong-random-secret}
+      JWT_EXPIRATION: 15m
+      JWT_REFRESH_EXPIRATION: 7d
+      JWT_ISSUER: forge
+      JWT_AUDIENCE: forge-client
+      DASHBOARD_URL: http://dashboard:3000
+      THROTTLE_TTL: "60"
+      THROTTLE_LIMIT: "100"
+      LOG_LEVEL: info
+      LOG_FORMAT: json
+      STORAGE_PROVIDER: local
+      STORAGE_BUCKET: forge-storage
+      STORAGE_MAX_FILE_SIZE: "10485760"
+      SECRET_ENCRYPTION_KEY: ${SECRET_ENCRYPTION_KEY:-change-this-to-a-32-byte-hex-secret-key}
+      WORKFLOW_MAX_EXECUTION_TIMEOUT: "300000"
+      WORKFLOW_MAX_LOOP_ITERATIONS: "100"
+    ports:
+      - "4000:4000"
+
+  # ── Dashboard ─────────────────────────────────────────────────────────────
+  dashboard:
+    build:
+      context: .
+      dockerfile: apps/dashboard/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - api
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      NEXT_PUBLIC_API_URL: http://localhost:4000
+    ports:
+      - "3000:3000"
+
+volumes:
+  forge_postgres:
+  forge_redis:

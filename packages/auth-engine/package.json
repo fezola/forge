@@ -1,0 +1,35 @@
+{
+  "name": "@forge/auth-engine",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Forge Authentication Engine — JWT-based auth, session management, and password hashing",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "lint": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "@nestjs/common": "^10.4.15",
+    "@nestjs/core": "^10.4.15",
+    "@nestjs/jwt": "^10.2.0",
+    "@nestjs/passport": "^10.0.3",
+    "@nestjs/config": "^3.3.0",
+    "passport": "^0.7.0",
+    "passport-jwt": "^4.0.1",
+    "bcrypt": "^5.1.1",
+    "ioredis": "^5.4.2",
+    "@forge/types": "workspace:*",
+    "rxjs": "^7.8.1"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/passport-jwt": "^4.0.1",
+    "@types/node": "^22.10.2",
+    "typescript": "^5.6.3",
+    "jest": "^29.7.0",
+    "rimraf": "^6.0.1"
+  }
+}

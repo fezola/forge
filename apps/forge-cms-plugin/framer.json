@@ -1,0 +1,10 @@
+{
+  "id": "forge1",
+  "name": "Forge Components",
+  "modes": [
+    "canvas",
+    "configureManagedCollection",
+    "syncManagedCollection"
+  ],
+  "icon": "/icon.svg"
+}
