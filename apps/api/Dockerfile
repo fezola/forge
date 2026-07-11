@@ -21,7 +21,7 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/packages ./packages
 COPY . .
-RUN pnpm --filter @forge/api run build
+RUN cd apps/api && npx -y @nestjs/cli build
 RUN cd apps/api && npx prisma generate
 
 # ── Runner ──────────────────────────────────────────────────────────────────
