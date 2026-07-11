@@ -11,6 +11,9 @@ importers:
       '@nestjs/cli':
         specifier: ^10.4.8
         version: 10.4.9
+      '@prisma/client':
+        specifier: ^6.0.1
+        version: 6.19.3(prisma@6.19.3(typescript@5.9.3))(typescript@5.9.3)
       '@types/node':
         specifier: ^22.10.2
         version: 22.20.1
