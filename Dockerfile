@@ -14,7 +14,7 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/packages ./packages
 COPY . .
-RUN npm install -g @nestjs/cli prisma && prisma generate --schema=apps/api/prisma/schema.prisma && cd apps/api && nest build
+RUN npm install -g @nestjs/cli prisma@6 && prisma generate --schema=apps/api/prisma/schema.prisma && cd apps/api && nest build
 
 FROM node:20-alpine AS runner
 ENV NODE_ENV=production
@@ -28,5 +28,5 @@ COPY --from=builder /app/apps/api/package.json ./package.json
 COPY --from=builder /app/packages ./packages
 
 EXPOSE ${PORT}
-RUN npm install -g prisma
+RUN npm install -g prisma@6
 CMD npx prisma db push --skip-generate && node dist/main
