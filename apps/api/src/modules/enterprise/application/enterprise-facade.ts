@@ -166,12 +166,11 @@ export class EnterpriseFacade {
   // ── Stats ──
 
   async getStats(projectId?: string) {
-    const where = projectId ? { projectId } : {};
     const [ssoProviders, roles, auditEvents, complianceReports] = await Promise.all([
-      this.prisma.ssoProvider.count(where),
-      this.prisma.rbacRole.count(where),
-      this.prisma.auditEvent.count(projectId ? { where: { projectId } } : {}),
-      this.prisma.complianceReport.count(where),
+      this.prisma.ssoProvider.count(projectId ? { where: { projectId } } : { where: {} }),
+      this.prisma.rbacRole.count(projectId ? { where: { projectId } } : { where: {} }),
+      this.prisma.auditEvent.count(projectId ? { where: { projectId } } : { where: {} }),
+      this.prisma.complianceReport.count(projectId ? { where: { projectId } } : { where: {} }),
     ]);
     return { ssoProviders, roles, auditEvents, complianceReports };
   }

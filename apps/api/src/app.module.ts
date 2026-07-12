@@ -10,7 +10,7 @@ import { WorkflowModule } from './modules/workflow/presentation/workflow.module'
 import { ReactiveModule } from './modules/reactive/presentation/reactive.module';
 import { IdentityModule } from './modules/identity/presentation/identity.module';
 import { StorageModule } from './modules/storage/presentation/storage.module';
-import { ForgeConfigModule } from './modules/config/presentation/config.module';
+import { ConfigModule as ForgeConfigModule } from './modules/config/presentation/config.module';
 import { CmsModule } from './modules/cms/presentation/cms.module';
 import { PaymentModule } from './modules/payment/presentation/payment.module';
 import { BlockchainModule } from './modules/blockchain/presentation/blockchain.module';

@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsObject } from 'class-validator';
+import { IsString, IsOptional, IsObject, IsNotEmpty } from 'class-validator';
 
 export class InstallConnectorDto {
   @IsString()

@@ -12,9 +12,22 @@
   "include": ["src/**/*"],
   "references": [
     { "path": "../../packages/auth-engine" },
-    { "path": "../../packages/database-engine" },
-    { "path": "../../packages/storage-engine" },
+    { "path": "../../packages/config-engine" },
+    { "path": "../../packages/config-types" },
     { "path": "../../packages/connector-core" },
-    { "path": "../../packages/types" }
+    { "path": "../../packages/connector-marketplace" },
+    { "path": "../../packages/connector-registry" },
+    { "path": "../../packages/connector-runtime" },
+    { "path": "../../packages/custom-connector" },
+    { "path": "../../packages/database-engine" },
+    { "path": "../../packages/identity-engine" },
+    { "path": "../../packages/identity-types" },
+    { "path": "../../packages/payment-engine" },
+    { "path": "../../packages/reactive-engine" },
+    { "path": "../../packages/secret-manager" },
+    { "path": "../../packages/storage-engine" },
+    { "path": "../../packages/storage-types" },
+    { "path": "../../packages/types" },
+    { "path": "../../packages/workflow-engine" }
   ]
 }
